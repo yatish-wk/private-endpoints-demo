@@ -1,0 +1,37 @@
+﻿@page
+@model vnetpocapp.Pages.Cosmos.IndexModel
+@{
+
+}
+
+<h2>Cosmos</h2>
+<table class="table">
+  <thead>
+    <tr>
+      <th>
+        @Html.DisplayNameFor(model => model.Data.Key)
+      </th>
+      <th>
+        @Html.DisplayNameFor(model => model.Data.Value)
+      </th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        @Html.DisplayFor(model => model.Data.Key)
+      </td>
+      <td>
+        @Html.DisplayFor(model => model.Data.Value)
+      </td>
+      <td>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<div>@Html.DisplayFor(model => model.CosmosError)</div>
+
+<h2>Storage Account</h2>
+<div>Blob data: @Html.DisplayFor(model => model.BlobData)</div>
+<div>@Html.DisplayFor(model => model.StorageError)</div>
