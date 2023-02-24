@@ -1,4 +1,8 @@
 #!/bin/bash
+
+# fail script when any command fails
+set -e
+
 source ./lib/vars.sh
 source ./lib/network.sh
 source ./lib/dns.sh
@@ -8,8 +12,12 @@ source ./lib/privateendpoints.sh
 create_endpoint_cosmos $locEast
 create_endpoint_cosmos $locWest
 
-create_endpoint_sql $locEast
-create_endpoint_sql $locWest
+# to support failover group, each sql server has private endpoints in both vnets
+create_endpoint_sql $locEast $locEast
+create_endpoint_sql $locEast $locWest
+create_endpoint_sql $locWest $locWest
+create_endpoint_sql $locWest $locEast
+
 
 create_endpoint_storage $locEast
 create_endpoint_storage $locWest

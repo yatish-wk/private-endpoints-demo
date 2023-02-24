@@ -5,7 +5,7 @@ Traditionally Azure PaaS services like SQL Azure, CosmosDB, Azure Service Bus et
 
 Take an example of a very simple application in figure:
 
-![Simple application](images/simple-app.png)
+![Simple application](Images/simple-app.png)
 
 
 It consists of an Azure Web App which uses Azure SQL to store it's data. By default, both the WebApp and SQL would be accessible to the public, however, we would not want the SQL to be accessible over the public internet. Instead, we would want to restrict its access and allow only the Azure WebApp to access the SQL database.

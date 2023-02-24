@@ -2,6 +2,8 @@ resourceGroup="private-endpoints-poc"
 locEast="EastUS"
 locWest="WestUS"
 
+dnsResourceGroup="private-endpoints-poc-dnszone"
+
 pocName="prvend"
 cosmosAccount="cosmos-${pocName}"
 cosmosDatabase="ToDoList"

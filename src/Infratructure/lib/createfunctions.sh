@@ -9,6 +9,19 @@ function create_resource_group() {
     fi
 }
 
+function create_dns_resource_group() {
+    local location=$1
+    local resourceGroup="${dnsResourceGroup}-${location}"
+    
+    if [ $(az group exists --name $resourceGroup | tr -dc [:alpha:]) == "false" ]
+    then
+        echo "Creating resource group $resourceGroup"
+        az group create --name $resourceGroup --location $location
+    else
+        echo "Resource group $resourceGroup already exists, skipping.."
+    fi
+}
+
 function create_appservice_plan() {
     # create app service plan
     local location=$1
@@ -38,6 +51,28 @@ function create_web_app() {
     fi
 }
 
+function set_webapp_app_setting() {
+    local location=$1
+    local settingName=$2
+    local settingValue=$3
+    local webApp="${webApp}-${location}"
+
+    az webapp config appsettings set -g $resourceGroup -n $webApp --settings $settingName="$settingValue"
+}
+
+function set_webapp_conn_string() {
+    local location=$1
+    local connStringType=$2
+    local connStringName=$3
+    local conStringValue=$4
+    local webApp="${webApp}-${location}"
+
+    az webapp config connection-string set --connection-string-type $connStringType \
+                    -g $resourceGroup -n $webApp \
+                    --settings $connStringName="${conStringValue}"
+}
+
+
 function create_cosmos_account() {
     # create cosmos db
     if [ $(az cosmosdb check-name-exists --name $cosmosAccount | tr -dc [:alpha:]) == "false" ]
@@ -49,6 +84,12 @@ function create_cosmos_account() {
     else
         echo "cosmos account $cosmosAccount already exists, skipping.."
     fi
+
+     # fetch cosmos url & keys
+    out_cosmosEndpointUrl=$(az cosmosdb show --name $cosmosAccount --resource-group $resourceGroup --query "documentEndpoint" -o tsv)
+  
+    local cosmosKeys=$(az cosmosdb keys list --name $cosmosAccount  --resource-group $resourceGroup)
+    out_primaryKey=$(echo $cosmosKeys | jq -r '.primaryMasterKey')
 }
 
 function create_cosmos_db() {
@@ -115,7 +156,7 @@ function create_failover_group() {
     local sqlServerPrimary="${sqlServer}-${location}"
     local sqlServerSecondary="${sqlServer}-${locationSecondary}"
 
-    exists=$(az sql failover-group show --server-name $sqlServerPrimary --name $sqlFailoverGroup --resource-group $resourceGroup --query name --output tsv 2>/dev/null)
+    exists=$(az sql failover-group show --server $sqlServerPrimary --name $sqlFailoverGroup --resource-group $resourceGroup --query name --output tsv 2>/dev/null)
     
     if [ -n "$exists" ]; then
         echo "The sql failover group $sqlFailoverGroup exists. Skipping..."
@@ -123,6 +164,8 @@ function create_failover_group() {
         echo "Creating The Azure SQLfailover group $sqlFailoverGroup"
         az sql failover-group create --name $sqlFailoverGroup --partner-server $sqlServerSecondary --resource-group $resourceGroup --server $sqlServerPrimary --partner-resource-group $resourceGroup --add-db $sqlDb
     fi
+
+    out_sqlConnectionString="Server=tcp:$sqlFailoverGroup.database.windows.net,1433;Initial Catalog=$sqlDb;Persist Security Info=False;User ID=$sqlLogin;Password=$sqlPass;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
 }
 
 function create_storage_account() {
@@ -140,6 +183,8 @@ function create_storage_account() {
         az storage account update --name $storageAccount --resource-group $resourceGroup --encryption-services file
         echo "The Azure Storage Account '$storageAccount' has been created successfully."
     fi
+
+    out_storageConnectionString=$(az storage account show-connection-string --name $storageAccount --resource-group $resourceGroup --query connectionString --output tsv)
 }
 
 function create_service_bus_namespace() {
@@ -159,6 +204,9 @@ function create_service_bus_namespace() {
         az servicebus queue create --resource-group $resourceGroup --namespace-name $serviceBusNamespace --name $queueName
         echo "Queue'$queueName' has been created successfully."
     fi
+
+    local connString=$(az servicebus namespace authorization-rule keys list --resource-group $resourceGroup --namespace-name ${serviceBusNamespace} --name RootManageSharedAccessKey --query primaryConnectionString -o tsv)
+    eval "out_busConnectionString_$location"='$connString'
 }
 
 function create_function_app() {
@@ -235,3 +283,4 @@ function vnet_integration() {
     az webapp vnet-integration add --name $webApp --resource-group $resourceGroup --vnet $vnetName --subnet $subnetName
     echo "Complete."
 }
+

@@ -21,18 +21,19 @@ function create_endpoint_cosmos() {
     fi
 
     local zoneName="privatelink.documents.azure.com"
-    create_private_dns_zone $zoneName
+    create_private_dns_zone $zoneName $location
     link_private_zone_to_vnet $zoneName $location
-    create_private_dns_zone_group $zoneName $privateEndpointName
+    create_private_dns_zone_group $zoneName $privateEndpointName $location
 }
 
 
 function create_endpoint_sql() {
     local location=$1
+    local vnetLocation=$2
     local sqlServer="${sqlServer}-${location}"
-    local vnetName="${vnetName}-${location}"
+    local vnetName="${vnetName}-${vnetLocation}"
     local subnetName="privateendpoints"
-    local privateEndpointName="sql-${privateEndpointName}-${location}"
+    local privateEndpointName="sql--${location}-${privateEndpointName}-for-vnet-${vnetLocation}"
     
     # Check if private endpoint already exists
     if az network private-endpoint show --name $privateEndpointName --resource-group $resourceGroup  >/dev/null 2>&1; then
@@ -46,8 +47,8 @@ function create_endpoint_sql() {
                             --output tsv)
 
         echo "Creating private endpoint '$privateEndpointName'..."
-        echo "executing - az network private-endpoint create --name $privateEndpointName --resource-group $resourceGroup --location $location --vnet-name $vnetName --subnet $subnetName --private-connection-resource-id $resourceId --connection-name $privateEndpointName --group-id sqlServer"
-        MSYS_NO_PATHCONV=1 az network private-endpoint create --name $privateEndpointName --resource-group $resourceGroup --location $location --vnet-name $vnetName --subnet $subnetName --private-connection-resource-id $resourceId --connection-name $privateEndpointName --group-id sqlServer
+        echo "executing - az network private-endpoint create --name $privateEndpointName --resource-group $resourceGroup --location $vnetLocation --vnet-name $vnetName --subnet $subnetName --private-connection-resource-id $resourceId --connection-name $privateEndpointName --group-id sqlServer"
+        MSYS_NO_PATHCONV=1 az network private-endpoint create --name $privateEndpointName --resource-group $resourceGroup --location $vnetLocation --vnet-name $vnetName --subnet $subnetName --private-connection-resource-id $resourceId --connection-name $privateEndpointName --group-id sqlServer
         
         #echo "Approving the private endpoint.."
         #az network private-endpoint-connection approve --name $privateEndpointName --resource-group $resourceGroup --resource-name $sqlServer --type Microsoft.Sql/servers --description "Approved"
@@ -55,9 +56,9 @@ function create_endpoint_sql() {
     fi
 
     local zoneName="privatelink.database.windows.net"
-    create_private_dns_zone $zoneName
-    link_private_zone_to_vnet $zoneName $location
-    create_private_dns_zone_group $zoneName $privateEndpointName
+    create_private_dns_zone $zoneName $vnetLocation
+    link_private_zone_to_vnet $zoneName $vnetLocation
+    create_private_dns_zone_group $zoneName $privateEndpointName $vnetLocation
 }
 
 function create_endpoint_storage() {
@@ -87,9 +88,9 @@ function create_endpoint_storage() {
     fi
 
     local zoneName="privatelink.blob.core.windows.net"
-    create_private_dns_zone $zoneName
+    create_private_dns_zone $zoneName $location
     link_private_zone_to_vnet $zoneName $location
-    create_private_dns_zone_group $zoneName $privateEndpointName
+    create_private_dns_zone_group $zoneName $privateEndpointName $location
 }
 
 function create_endpoint_bus() {
@@ -120,7 +121,7 @@ function create_endpoint_bus() {
     fi
 
     local zoneName="privatelink.servicebus.windows.net"
-    create_private_dns_zone $zoneName
+    create_private_dns_zone $zoneName $location
     link_private_zone_to_vnet $zoneName $location
-    create_private_dns_zone_group $zoneName $privateEndpointName
+    create_private_dns_zone_group $zoneName $privateEndpointName $location
 }
