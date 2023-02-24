@@ -10,27 +10,37 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
 steps:
-- task: NuGetToolInstaller@1
 
-- task: NuGetCommand@2
+- task: DotNetCoreCLI@2
+  displayName: 'Restore Solution'
   inputs:
-    restoreSolution: '$(solution)'
+    command: 'restore'
+    projects: 'src/WebApp/vnetpocapp/vnetpocapp.sln'
+    verbosityRestore: 'Normal'
 
-- task: VSBuild@1
+- task: DotNetCoreCLI@2
+  displayName: 'Build Solution'
   inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactStagingDirectory)"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    command: 'build'
+    projects: 'src/WebApp/vnetpocapp/vnetpocapp.sln'
+    arguments: '--no-restore --configuration $(buildConfiguration)'
 
+- task: DotNetCoreCLI@2
+  displayName: 'Publish projects'
+  inputs:
+    command: 'publish'
+    publishWebProjects: true
+    arguments: '--no-build --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
 
 - task: CopyFiles@2
   inputs:
     SourceFolder: 'src/Infratructure'
     Contents: '**'
     TargetFolder: '$(build.artifactstagingdirectory)/Infrastructure'
+
+- publish: $(Build.ArtifactStagingDirectory)
+  artifact: demoapp
