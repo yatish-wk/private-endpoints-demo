@@ -31,6 +31,6 @@ steps:
 
 - task: CopyFiles@2
   inputs:
-    SourceFolder: 'src/Infrastructure'
+    SourceFolder: 'src/Infratructure'
     Contents: '**'
     TargetFolder: '$(build.artifactstagingdirectory)/Infrastructure'
