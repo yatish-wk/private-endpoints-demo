@@ -87,9 +87,7 @@ function create_cosmos_account() {
 
      # fetch cosmos url & keys
     out_cosmosEndpointUrl=$(az cosmosdb show --name $cosmosAccount --resource-group $resourceGroup --query "documentEndpoint" -o tsv)
-  
-    local cosmosKeys=$(az cosmosdb keys list --name $cosmosAccount  --resource-group $resourceGroup)
-    out_primaryKey=$(echo $cosmosKeys | jq -r '.primaryMasterKey')
+    out_primaryKey=$(az cosmosdb keys list --name $cosmosAccount  --resource-group $resourceGroup --query primaryMasterKey --output tsv)
 }
 
 function create_cosmos_db() {
@@ -138,7 +136,7 @@ function create_sql_db() {
     local location=$1
     local sqlServer="${sqlServer}-${location}"
 
-    exists=$(az sql db show --server-name $sqlServer --name $sqlDb --resource-group $resourceGroup --query name --output tsv 2>/dev/null)
+    exists=$(az sql db show --server $sqlServer --name $sqlDb --resource-group $resourceGroup --query name --output tsv 2>/dev/null)
     
     if [ -n "$exists" ]; then
         echo "The sql db $sqlDb exists. Skipping..."
