@@ -21,3 +21,7 @@ function disable_public_access_storage() {
     az storage account update --name $storageAccount --resource-group $resourceGroup  --public-network-access Disabled
     echo "Public access to storage'$storageAccount' has been disabled"
 }
+
+function disable_public_access_bus() {
+    # TBD - could not find documentation
+}
