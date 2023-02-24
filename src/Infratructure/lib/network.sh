@@ -23,5 +23,12 @@ function disable_public_access_storage() {
 }
 
 function disable_public_access_bus() {
+    local location=$1
+    local serviceBusNamespace="${serviceBusNamespace}-${location}"
+
+    # Disable public access 
+    echo "Disabling public access to service bus '$serviceBusNamespace'" 
     # TBD - could not find documentation
+    echo "TBD - could not find documentation.."
+    
 }

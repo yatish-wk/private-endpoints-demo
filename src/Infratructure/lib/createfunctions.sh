@@ -277,8 +277,14 @@ function vnet_integration() {
     local vnetName="${vnetName}-${location}"
     local subnetName="integration"
 
-    echo "Integrating the web app '$webApp' with the VNet '$vnetName' and subnet '$subnetName'..."
-    az webapp vnet-integration add --name $webApp --resource-group $resourceGroup --vnet $vnetName --subnet $subnetName
-    echo "Complete."
+    exists=$(az webapp vnet-integration list -g $resourceGroup -n $webApp --query "[].name" --output tsv)
+
+    if [ -n "$exists" ]; then
+        echo "vnet integration already configured for web app '$webApp'. Skipping ..."
+    else
+        echo "Integrating the web app '$webApp' with the VNet '$vnetName' and subnet '$subnetName'..."
+        az webapp vnet-integration add --name $webApp --resource-group $resourceGroup --vnet $vnetName --subnet $subnetName
+        echo "Complete."
+    fi
 }
 
