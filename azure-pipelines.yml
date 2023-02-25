@@ -42,7 +42,8 @@ steps:
     targetType: 'inline'
     script: |
       dotnet tool install --global dotnet-ef
-      dotnet ef migrations bundle --verbose --runtime win-x64 -o $(Build.ArtifactStagingDirectory)\\efbundle.exe -p src/WebApp/vnetpocapp/vnetpocapp/vnetpocapp.csproj
+      dotnet ef migrations bundle --verbose --runtime win-x64 -p src/WebApp/vnetpocapp/vnetpocapp/vnetpocapp.csproj
+      cp src/WebApp/vnetpocapp/vnetpocapp/efbundle.exe $(Build.ArtifactStagingDirectory)
 
 - task: CopyFiles@2
   inputs:
