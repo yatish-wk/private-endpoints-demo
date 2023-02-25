@@ -13,7 +13,7 @@ isPrimary=$(az sql failover-group show \
                     --name $sqlFailoverGroup \
                     --resource-group $resourceGroup \
                     --server $sqlServerEast \
-                    --query replicationRole
+                    --query replicationRole \
                     --output tsv)
 
 if [ "$isPrimary" == "Primary" ]; then
@@ -23,7 +23,7 @@ else
                     --name $sqlFailoverGroup \
                     --resource-group $resourceGroup \
                     --server $sqlServerWest \
-                    --query replicationRole
+                    --query replicationRole \
                     --output tsv)
     if [ "$isPrimary" == "Primary" ]; then
         primaryServer=$sqlServerWest
