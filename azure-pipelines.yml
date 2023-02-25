@@ -43,7 +43,7 @@ steps:
     script: |
       dotnet tool install --global dotnet-ef
       dotnet ef migrations bundle --verbose --runtime win-x64 -p src/WebApp/vnetpocapp/vnetpocapp/vnetpocapp.csproj
-      cp efbundle.exe $(Build.ArtifactStagingDirectory)/Infrastructure
+      cp efbundle.exe ${BUILD_ARTIFACTSTAGINGDIRECTORY}/Infrastructure
 
 - task: CopyFiles@2
   inputs:
