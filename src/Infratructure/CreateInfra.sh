@@ -67,9 +67,9 @@ set_webapp_conn_string $locEast "SQLAzure" "PoCContext" "$out_sqlConnectionStrin
 set_webapp_conn_string $locWest "SQLAzure" "PoCContext" "$out_sqlConnectionString"
 
 busConString="out_busConnectionString_$locEast"
-set_webapp_conn_string $locEast "ServiceBus" "PoCBus" ${!busConString}
+set_webapp_conn_string $locEast "Custom" "PoCBus" ${!busConString}
 busConString="out_busConnectionString_$locWest"
-set_webapp_conn_string $locWest "ServiceBus" "PoCBus" ${!busConString}
+set_webapp_conn_string $locWest "Custom" "PoCBus" ${!busConString}
 
 echo "Completed web app configuration!"
 
