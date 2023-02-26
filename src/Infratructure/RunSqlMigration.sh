@@ -43,7 +43,8 @@ az sql server update --name $primaryServer --resource-group $resourceGroup --ena
 az sql server firewall-rule create -g $resourceGroup -s $primaryServer -n agentrule --start-ip-address $agentIp --end-ip-address $agentIp
 
 #run migration
-./efbundle.exe --connection "$connString"
+echo "{\"ConnectionStrings\": {\"PoCContext\" : \"$connString\"}}" > appsettings.json
+./efbundle.exe
 
 #remove firewall rule
 az sql server firewall-rule delete -g $resourceGroup -s $primaryServer -n agentrule 
