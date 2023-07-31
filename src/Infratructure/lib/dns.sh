@@ -43,6 +43,27 @@ function link_private_zone_to_vnet() {
     fi
 }
 
+function delete_link_private_zone_to_vnet() {
+    local privateDnsZoneName=$1
+    local location=$2
+    local vnetResourceGroup=$resourceGroup
+    local resourceGroup="${dnsResourceGroup}-${location}"
+    local linkName="cosmos-link-${vnetName}"
+    
+    # delete link zone from vnet
+    if az network private-dns link vnet show \
+            --zone-name $privateDnsZoneName \
+            --name $linkName \
+            --resource-group $resourceGroup >/dev/null 2>&1; then
+        # Delete the link between the private DNS zone and the virtual network
+        echo "Deleting link between private DNS zone '$privateDnsZoneName' and virtual network '$vnetName'..."
+        MSYS_NO_PATHCONV=1 az network private-dns link vnet delete --name $linkName --resource-group $resourceGroup --zone-name $privateDnsZoneName
+        echo "Link between private DNS zone '$privateDnsZoneName' and virtual network '$vnetName' has been deleted."
+    else
+        echo "No Link between private DNS zone '$privateDnsZoneName' and virtual network '$vnetName' already exists. Skipping link creation."
+    fi
+}
+
 function create_private_dns_zone_group() {
     local privateDnsZoneName=$1
     local privateEndpointName=$2

@@ -72,7 +72,6 @@ function set_webapp_conn_string() {
                     --settings $connStringName="${conStringValue}"
 }
 
-
 function create_cosmos_account() {
     # create cosmos db
     if [ $(az cosmosdb check-name-exists --name $cosmosAccount | tr -dc [:alpha:]) == "false" ]
@@ -144,7 +143,6 @@ function create_sql_db() {
         echo "Creating The Azure SQL db $sqlDb"
         az sql db create --resource-group $resourceGroup --server $sqlServer --name $sqlDb
     fi
-
 }
 
 function create_failover_group() {
@@ -287,4 +285,3 @@ function vnet_integration() {
         echo "Complete."
     fi
 }
-
