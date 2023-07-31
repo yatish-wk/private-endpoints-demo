@@ -8,7 +8,7 @@ source ./lib/network.sh
 source ./lib/dns.sh
 source ./lib/privateendpoints.sh
 
-# creates priavate endpoints
+# creates private endpoints
 create_endpoint_cosmos $locEast
 create_endpoint_cosmos $locWest
 
@@ -17,7 +17,6 @@ create_endpoint_sql $locEast $locEast
 create_endpoint_sql $locEast $locWest
 create_endpoint_sql $locWest $locWest
 create_endpoint_sql $locWest $locEast
-
 
 create_endpoint_storage $locEast
 create_endpoint_storage $locWest

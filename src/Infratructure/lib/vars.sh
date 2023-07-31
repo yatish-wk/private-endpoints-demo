@@ -27,3 +27,8 @@ functionApp="functionapp-${pocName}"
 vnetName="vnet-${pocName}"
 
 privateEndpointName="endpoint-${pocName}"
+
+cosmosZoneName="privatelink.documents.azure.com"
+sqlZoneName="privatelink.database.windows.net"
+storageZoneName="privatelink.blob.core.windows.net"
+servicebusZoneName="privatelink.servicebus.windows.net"

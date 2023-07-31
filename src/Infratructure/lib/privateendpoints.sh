@@ -20,12 +20,11 @@ function create_endpoint_cosmos() {
         echo "Private endpoint '$privateEndpointName' has been created."
     fi
 
-    local zoneName="privatelink.documents.azure.com"
-    create_private_dns_zone $zoneName $location
-    link_private_zone_to_vnet $zoneName $location
-    create_private_dns_zone_group $zoneName $privateEndpointName $location
+    # local zoneName="privatelink.documents.azure.com"
+    create_private_dns_zone $cosmosZoneName $location
+    link_private_zone_to_vnet $cosmosZoneName $location
+    create_private_dns_zone_group $cosmosZoneName $privateEndpointName $location
 }
-
 
 function create_endpoint_sql() {
     local location=$1
@@ -55,10 +54,10 @@ function create_endpoint_sql() {
         echo "Private endpoint '$privateEndpointName' has been created."
     fi
 
-    local zoneName="privatelink.database.windows.net"
-    create_private_dns_zone $zoneName $vnetLocation
-    link_private_zone_to_vnet $zoneName $vnetLocation
-    create_private_dns_zone_group $zoneName $privateEndpointName $vnetLocation
+    # local zoneName="privatelink.database.windows.net"
+    create_private_dns_zone $sqlZoneName $vnetLocation
+    link_private_zone_to_vnet $sqlZoneName $vnetLocation
+    create_private_dns_zone_group $sqlZoneName $privateEndpointName $vnetLocation
 }
 
 function create_endpoint_storage() {
@@ -87,10 +86,10 @@ function create_endpoint_storage() {
         echo "Private endpoint '$privateEndpointName' has been created."
     fi
 
-    local zoneName="privatelink.blob.core.windows.net"
-    create_private_dns_zone $zoneName $location
-    link_private_zone_to_vnet $zoneName $location
-    create_private_dns_zone_group $zoneName $privateEndpointName $location
+    # local zoneName="privatelink.blob.core.windows.net"
+    create_private_dns_zone $storageZoneName $location
+    link_private_zone_to_vnet $storageZoneName $location
+    create_private_dns_zone_group $storageZoneName $privateEndpointName $location
 }
 
 function create_endpoint_bus() {
@@ -120,8 +119,8 @@ function create_endpoint_bus() {
         echo "Private endpoint '$privateEndpointName' has been created."
     fi
 
-    local zoneName="privatelink.servicebus.windows.net"
-    create_private_dns_zone $zoneName $location
-    link_private_zone_to_vnet $zoneName $location
-    create_private_dns_zone_group $zoneName $privateEndpointName $location
+    # local zoneName="privatelink.servicebus.windows.net"
+    create_private_dns_zone $servicebusZoneName $location
+    link_private_zone_to_vnet $servicebusZoneName $location
+    create_private_dns_zone_group $servicebusZoneName $privateEndpointName $location
 }
